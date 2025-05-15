@@ -9,14 +9,14 @@ import java.io.IOException;
 import java.util.StringTokenizer;
 
 /*
-    input: il cane fa un salto
-    output: (il, doc_name:1)  (cane, doc_name:1) ...
+    input: file1
+    output: ((il, file1:1) (cane, file1:1) (il, file1:1) ... )
  */
 
+// (il, file1:1)   (il, file3:1)  ==> (il, file1:1 file3:1)
 
 public class InvertedIndexMapper extends Mapper<Object, Text, Text, CountPerFile> {
     private final static IntWritable one = new IntWritable(1);
-    private final static Text fileName = new Text();
     private final Text token_key = new Text();
     private final CountPerFile countPerFile = new CountPerFile();
 
@@ -25,7 +25,7 @@ public class InvertedIndexMapper extends Mapper<Object, Text, Text, CountPerFile
         FileSplit fileSplit = (FileSplit) context.getInputSplit();
         String fileName = fileSplit.getPath().getName();
 
-        // suddivide la riga in token (parola singola)
+        // suddivide il file in token (parola singola)
         final StringTokenizer itr = new StringTokenizer(value.toString());
 
         while (itr.hasMoreTokens()) {

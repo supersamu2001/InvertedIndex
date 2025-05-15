@@ -2,7 +2,6 @@ package it.unipi.hadoop;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
@@ -16,16 +15,18 @@ public class InvertedIndex
         Configuration conf = new Configuration();
         String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
         if (otherArgs.length < 2) {
-            System.err.println("Usage: invertedIndex <in> [<in>...] <out>");
+            System.err.println("Usage: invertedIndex <in> <out>");
             System.exit(2);
         }
         Job job = Job.getInstance(conf, "inverted index");
         job.setJarByClass(InvertedIndex.class);
         job.setMapperClass(InvertedIndexMapper.class);
-        job.setCombinerClass(InvertedIndexCombiner.class);
+        // job.setCombinerClass(InvertedIndexReducer.class);
         job.setReducerClass(InvertedIndexReducer.class);
+        job.setMapOutputKeyClass(Text.class);
+        job.setMapOutputValueClass(CountPerFile.class);
         job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(IntWritable.class);
+        job.setOutputValueClass(Text.class);
         for (int i = 0; i < otherArgs.length - 1; ++i) {
             FileInputFormat.addInputPath(job, new Path(otherArgs[i]));
         }
