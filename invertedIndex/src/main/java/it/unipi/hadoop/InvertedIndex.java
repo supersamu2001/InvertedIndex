@@ -21,7 +21,7 @@ public class InvertedIndex
         Job job = Job.getInstance(conf, "inverted index");
         job.setJarByClass(InvertedIndex.class);
         job.setMapperClass(InvertedIndexMapper.class);
-        // job.setCombinerClass(InvertedIndexReducer.class);
+        // job.setCombinerClass(InvertedIndexCombiner.class);
         job.setReducerClass(InvertedIndexReducer.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(CountPerFile.class);
