@@ -1,0 +1,5 @@
+it\unipi\hadoop\InvertedIndexMapper.class
+it\unipi\hadoop\InvertedIndexCombiner.class
+it\unipi\hadoop\InvertedIndex.class
+it\unipi\hadoop\InvertedIndexReducer.class
+it\unipi\hadoop\CountPerFile.class

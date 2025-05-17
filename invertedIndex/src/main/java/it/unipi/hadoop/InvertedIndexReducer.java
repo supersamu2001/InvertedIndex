@@ -1,6 +1,5 @@
 package it.unipi.hadoop;
 
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
@@ -32,6 +31,6 @@ public class InvertedIndexReducer extends Reducer<Text, CountPerFile, Text, Text
             result.add(entry.getKey() + ":" + entry.getValue());
         }
 
-        context.write(key, new Text(result.toString()));
+        context.write(key, new Text(String.join(", ", result)));
     }
 }

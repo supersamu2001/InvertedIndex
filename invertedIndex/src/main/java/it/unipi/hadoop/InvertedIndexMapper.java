@@ -14,8 +14,8 @@ import java.util.StringTokenizer;
  */
 
 public class InvertedIndexMapper extends Mapper<Object, Text, Text, CountPerFile> {
-    private final static IntWritable one = new IntWritable(1);
-    private final Text token_key = new Text();
+    // private final static IntWritable one = new IntWritable(1);
+    // private final Text token_key = new Text();
 
     public void map(final Object key, final Text value, final Context context) throws IOException, InterruptedException {
         // Ottieni lo split attuale, da cui puoi risalire al file
@@ -26,10 +26,10 @@ public class InvertedIndexMapper extends Mapper<Object, Text, Text, CountPerFile
         final StringTokenizer itr = new StringTokenizer(value.toString());
 
         while (itr.hasMoreTokens()) {
-            CountPerFile countPerFile = new CountPerFile(new Text(fileName), one);
-
-            token_key.set(itr.nextToken());
-            context.write(token_key, countPerFile);
+            String word = itr.nextToken();
+            CountPerFile countPerFile = new CountPerFile(new Text(fileName), new IntWritable(1));
+            context.write(new Text(word), countPerFile);
         }
+
     }
 }
