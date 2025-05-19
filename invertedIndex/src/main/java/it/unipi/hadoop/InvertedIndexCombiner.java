@@ -18,7 +18,6 @@ import java.util.Map;
 
 public class InvertedIndexCombiner extends Reducer<Text, CountPerFile,Text,CountPerFile> {
     public void reduce(Text key, Iterable<CountPerFile> values, Context context) throws IOException, InterruptedException {
-        List<String> result = new ArrayList<>();
         Map<String, Integer> fileCounts = new HashMap<>();
 
         for (CountPerFile val : values) {
