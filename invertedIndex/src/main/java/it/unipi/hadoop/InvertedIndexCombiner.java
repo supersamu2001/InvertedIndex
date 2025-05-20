@@ -16,14 +16,15 @@ import java.util.Map;
     more output: ((il, file1:2) (cane, file1:1) ... )
  */
 
-public class InvertedIndexCombiner extends Reducer<Text, CountPerFile,Text,CountPerFile> {
+public class InvertedIndexCombiner extends Reducer<Text, CountPerFile, Text, CountPerFile> {
+
+    @Override
     public void reduce(Text key, Iterable<CountPerFile> values, Context context) throws IOException, InterruptedException {
         Map<String, Integer> fileCounts = new HashMap<>();
 
         for (CountPerFile val : values) {
             String fileName = val.getFileName().toString();
             int count = val.getCounter().get();
-
             // cerca nella map una chiave col nome di fileName, e somma il suo valore (oppure 0 se ancora non è presente) con count
             fileCounts.put(fileName, fileCounts.getOrDefault(fileName, 0) + count);
         }

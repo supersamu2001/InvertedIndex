@@ -15,6 +15,8 @@ import java.util.Map;
  */
 
 public class InvertedIndexReducer extends Reducer<Text, CountPerFile, Text, Text> {
+
+    @Override
     public void reduce(Text key, Iterable<CountPerFile> values, Context context) throws IOException, InterruptedException {
         List<String> result = new ArrayList<>();
         Map<String, Integer> fileCounts = new HashMap<>();
@@ -22,7 +24,6 @@ public class InvertedIndexReducer extends Reducer<Text, CountPerFile, Text, Text
         for (CountPerFile val : values) {
             String fileName = val.getFileName().toString();
             int count = val.getCounter().get();
-
             // cerca nella map una chiave col nome di fileName, e somma il suo valore (oppure 0 se ancora non è presente) con count
             fileCounts.put(fileName, fileCounts.getOrDefault(fileName, 0) + count);
         }
@@ -31,6 +32,6 @@ public class InvertedIndexReducer extends Reducer<Text, CountPerFile, Text, Text
             result.add(entry.getKey() + ":" + entry.getValue());
         }
 
-        context.write(key, new Text(String.join("    ", result)));
+        context.write(key, new Text(String.join("\t", result)));
     }
 }
