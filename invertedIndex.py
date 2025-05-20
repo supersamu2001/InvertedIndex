@@ -1,5 +1,4 @@
 from pyspark import SparkConf, SparkContext
-from pyspark.sql import SparkSession
 import sys
 import re
 import nltk
