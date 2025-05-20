@@ -21,22 +21,15 @@ public class InvertedIndex {
         Job job = Job.getInstance(conf, "inverted index");
         job.setJarByClass(InvertedIndex.class);
         job.setMapperClass(InvertedIndexMapper.class);
-        job.setCombinerClass(InvertedIndexCombiner.class);
         job.setReducerClass(InvertedIndexReducer.class);
         job.setInputFormatClass(MyInputFormat.class);
-        // job.setInputKeyClass(FileLineKey.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(CountPerFile.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
 
         // job.setInputFormatClass(CombineTextInputFormat.class); // Combine many small files
-        CombineTextInputFormat.setMaxInputSplitSize(job, 134217728); // 128MB
-
-        /*
-        for (int i = 0; i < otherArgs.length - 1; ++i)
-            FileInputFormat.addInputPath(job, new Path(otherArgs[i]));
-         */
+        CombineTextInputFormat.setMaxInputSplitSize(job, 100 * 1024); // 128MB
 
         CombineFileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));

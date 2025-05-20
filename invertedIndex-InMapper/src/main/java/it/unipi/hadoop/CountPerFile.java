@@ -9,7 +9,6 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 public class CountPerFile implements WritableComparable<CountPerFile> {
-
     private Text fileName;
     private IntWritable counter;
 
