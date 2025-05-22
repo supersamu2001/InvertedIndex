@@ -62,10 +62,10 @@ if __name__ == "__main__":
 
         # save the result on the hdfs
         rdd_final_sorted.saveAsTextFile(output_dir)
-        print(f"✅ Word count saved in {output_dir}")
+        print(f"Word count saved in {output_dir}")
 
     except Exception as e:
-        print(f"❌ Error during execution: {e}")
+        print(f"Error during execution: {e}")
     
     finally:
         sc.stop()

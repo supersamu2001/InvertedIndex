@@ -22,7 +22,6 @@ public class CombineFileRecordReaderWrapper extends RecordReader<FileLineKey, Te
         startOffset = split.getOffset(index);
         long length = split.getLength(index);
         FileSplit fileSplit = new FileSplit(path, startOffset, length, split.getLocations());
-
         lineReader.initialize(fileSplit, context);
     }
 

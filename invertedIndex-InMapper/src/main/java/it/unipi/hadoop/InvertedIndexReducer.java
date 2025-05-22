@@ -31,6 +31,6 @@ public class InvertedIndexReducer extends Reducer<Text, CountPerFile, Text, Text
             result.add(entry.getKey() + ":" + entry.getValue());
         }
 
-        context.write(key, new Text(String.join("    ", result)));
+        context.write(key, new Text(String.join("\t", result)));
     }
 }
