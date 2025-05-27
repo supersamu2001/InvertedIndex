@@ -1,12 +1,8 @@
 package it.unipi.hadoop;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
-import org.apache.hadoop.mapreduce.lib.input.CombineFileSplit;
-import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 
 import java.io.*;
 import java.util.*;
@@ -15,11 +11,10 @@ import java.util.*;
     1 input: file1
     more output: ((il, file1:1) (cane, file1:1) (il, file1:1) ... )
  */
-public class InvertedIndexMapper extends Mapper<FileLineKey, Text, Text, CountPerFile> {
-    private static final IntWritable one = new IntWritable(1);
-    private final Text token_key = new Text();
+public class InvertedIndexMapper extends Mapper<FileLineKey, Text, Text, Text> {
     private final Set<String> stopWords = new HashSet<>();
-    private Map<String, Map<String, Integer>> wordsPerFiles = new HashMap<>();
+    private final Map<String, Integer> wordPerFiles = new HashMap<>();
+    private String fileName;
 
     @Override
     protected void setup(Context context) throws IOException, InterruptedException {
@@ -46,29 +41,34 @@ public class InvertedIndexMapper extends Mapper<FileLineKey, Text, Text, CountPe
 
     @Override
     protected void map(final FileLineKey key, final Text value, final Context context) throws IOException, InterruptedException {
-        String fileName = key.getFileName().toString();
+        String actualFileName = key.getFileName().toString();
         String cleaned = preprocessing(value.toString());
-        StringTokenizer itr = new StringTokenizer(cleaned);
+        if(fileName == null) fileName = actualFileName;
+        if(!fileName.equals(actualFileName)) {
+            // the file change or is the first
+            flush(context);
+            fileName = actualFileName;
+        }
 
-        while (itr.hasMoreTokens()) {
-            String word = itr.nextToken();
-            if(!wordsPerFiles.containsKey(word))
-                wordsPerFiles.put(word, new HashMap<>());
-            wordsPerFiles.get(word).merge(fileName, 1, Integer::sum);
+        for (String token : cleaned.split("\\s+")) {
+            if (token.isEmpty()) continue;
+            wordPerFiles.merge(token, 1, Integer::sum);
         }
 
     }
 
     @Override
-    protected void cleanup(Mapper<FileLineKey, Text, Text, CountPerFile>.Context context) throws IOException, InterruptedException {
-        for(Map.Entry<String, Map<String, Integer>> entry : wordsPerFiles.entrySet()) {
-            for(Map.Entry<String, Integer> sub_entry : entry.getValue().entrySet()) {
-                CountPerFile countPerFile = new CountPerFile(new Text(sub_entry.getKey()), new IntWritable(sub_entry.getValue()));
-                context.write(new Text(entry.getKey()), countPerFile);
-            }
-        }
+    protected void cleanup(Mapper<FileLineKey, Text, Text, Text>.Context context) throws IOException, InterruptedException {
+        // flush of the last file
+        flush(context);
     }
 
+    private void flush(Context context) throws IOException, InterruptedException {
+        for (Map.Entry<String, Integer> entry : wordPerFiles.entrySet())
+            context.write(new Text(entry.getKey()), new Text(fileName + ":" + entry.getValue()));
+        wordPerFiles.clear();
+    }
+    
     private String preprocessing(String text) {
         // Converte in minuscolo, rimuove genitivi sassoni e caratteri non alfanumerici
         text = text.toLowerCase()

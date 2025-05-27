@@ -24,13 +24,13 @@ public class InvertedIndex {
         job.setReducerClass(InvertedIndexReducer.class);
         job.setInputFormatClass(MyInputFormat.class);
         job.setMapOutputKeyClass(Text.class);
-        job.setMapOutputValueClass(CountPerFile.class);
+        job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
+        job.setNumReduceTasks(5);
+        // job.setNumReduceTasks(conf.getInt("mapreduce.job.reduces", 1));
 
-        // job.setInputFormatClass(CombineTextInputFormat.class); // Combine many small files
-        CombineTextInputFormat.setMaxInputSplitSize(job, 100 * 1024); // 128MB
-
+        CombineTextInputFormat.setMaxInputSplitSize(job, 1024 * 1024 * 128); // 128MB
         CombineFileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
         System.exit(job.waitForCompletion(true) ? 0 : 1);

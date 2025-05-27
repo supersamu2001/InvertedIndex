@@ -31,7 +31,7 @@ public class InvertedIndex {
         job.setOutputValueClass(Text.class);
 
         // job.setInputFormatClass(CombineTextInputFormat.class); // Combine many small files
-        CombineTextInputFormat.setMaxInputSplitSize(job, 134217728); // 128MB
+        CombineTextInputFormat.setMaxInputSplitSize(job, 1024 * 1024 * 32);
 
         /*
         for (int i = 0; i < otherArgs.length - 1; ++i)
