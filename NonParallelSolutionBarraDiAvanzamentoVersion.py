@@ -2,11 +2,14 @@ import os
 import sys  
 from collections import defaultdict  
 import re 
-from lkt import StopwordList  
+import nltk
+from nltk.corpus import stopwords
 from tqdm import tqdm
 
 # Loading English stopwords using LKT library
-stopwords = set(StopwordList(language="en").words())
+# stopwords = set(StopwordList(language="en").words())
+nltk.download('stopwords')
+stop_words = set(stopwords.words('english'))
 
 # Function that scans the contents of the folder looking for .txt files (the inputs)
 def analizza_cartella(inputFolder, outputFile):
@@ -37,7 +40,7 @@ def analizza_cartella(inputFolder, outputFile):
                     elif word.endswith("s'"):
                         word = word[:-1]
                     # Count the word if it is not a stopword (otherwise ignore it)
-                    if word not in stopwords:
+                    if word not in stop_words:
                         occurrences[word][fileName] += 1
         # If it fails to read a file for any reason, it says so
         except Exception as e:
