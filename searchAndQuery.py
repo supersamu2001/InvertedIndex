@@ -10,6 +10,8 @@ if __name__ == "__main__":
     words = sys.argv[2:]
     # remove the replicated words
     words = list(set(words))
+    # store the number of the input words
+    lenInputWords = len(words)
 
     if not os.path.isdir(input_directory):
         exit("The first parameter should be a directory")
@@ -28,12 +30,6 @@ if __name__ == "__main__":
     # the file_input contains all the words sorted! (important)
     file_input = "\n".join(input_contents)
 
-    # print(file_input)
-
-    # searching the files that contains all the words in input
-    words.sort()
-    actual_word = words[0]
-    actual_word_index = 0
     fileCount = {}
 
     file_lines = file_input.split("\n")
@@ -41,34 +37,29 @@ if __name__ == "__main__":
         data = file_line.split("\t")
         word = data[0]
         files = data[1:]
-        # print("FILES: " + str(files))
 
-        if actual_word < word :
-            exit("No file contains all input words")
-
-        # the word is found (?)
-        if actual_word == word :
+        # the word is found
+        if word in words :
             # increments the count of the finding files for the target word
             for file in files:
-                # print("single file: " + str(file))
                 # get only the filename, removing the number of the occurrences
                 file = file.split(":")[0]
                 fileCount[file] = fileCount.get(file, 0) + 1
-            # next actual words to search for
-            actual_word_index += 1
-            if not actual_word_index == len(words):
-                actual_word = words[actual_word_index]
-            else :
-                break
 
+            words.remove(word)
+
+        if len(words) == 0:
+            break
+
+    # check the files containing all the input words
     found = False
     for file, count in fileCount.items():
-        if count == len(words):
+        if count == lenInputWords:
             print(file)
             found = True
 
     if not found:
-        print("No file contains all input words 2")
+        print("No file contains all input words")
 
 
 

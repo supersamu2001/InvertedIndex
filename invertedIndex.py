@@ -5,7 +5,6 @@ import nltk
 import os
 from nltk.corpus import stopwords
 
-
 # function that creates a contex of the application
 def create_spark_context(app_name="invertedIndex"):
     conf = SparkConf().setAppName(app_name)
@@ -26,6 +25,13 @@ def preprocessing(line):
     filtered_tokens = [word for word in tokens if word not in stop_words]
     return filtered_tokens
 
+def local_reduce(it):
+    from collections import defaultdict
+    counts = defaultdict(int)
+    for k, v in it:
+        counts[k] += v
+    return counts.items()
+
 nltk.download('stopwords')
 stop_words = set(stopwords.words('english'))
 
@@ -40,10 +46,14 @@ if __name__ == "__main__":
 
     # Inizializza il contesto Spark
     sc = create_spark_context()
+    fs = sc._jvm.org.apache.hadoop.fs.FileSystem.get(sc._jsc.hadoopConfiguration())
+    path = sc._jvm.org.apache.hadoop.fs.Path(input_dir)
+    status = fs.listStatus(path)
+    n_files = sum(1 for fileStatus in status if fileStatus.isFile())
 
     try:
-        # read the files in the directory and split in some partitions maximum 128MB each
-        rdd = sc.wholeTextFiles(input_dir)
+        #
+        rdd = sc.wholeTextFiles(input_dir).coalesce(max(1, int(n_files / 1000)))
 
         # x[0] = fileName
         # x[1] = text
@@ -51,17 +61,18 @@ if __name__ == "__main__":
         rdd_cleaned_words = rdd.flatMap(lambda x : [((word, os.path.basename(x[0])), 1) for word in preprocessing(x[1])])
 
         # [ ((il, file1), 1), ((il, file1), 1) ] -> ((il, file1), 2)
-        rdd_count_words = rdd_cleaned_words.reduceByKey(lambda x, y: x + y)
+        # rdd_count_words = rdd_cleaned_words.reduceByKey(lambda x, y: x + y)
+        rdd_count_words = rdd_cleaned_words.mapPartitions(local_reduce)
 
         # (il, file1), 2) -> (il, (file1:2))
         rdd_words_filecount = rdd_count_words.map(lambda x: (x[0][0], f"{x[0][1]}:{x[1]}"))
 
-        # [((il, file1), 2), ((il, file3), 4)] -> (il, (file1:2, file3:4))
-        rdd_final = rdd_words_filecount.groupByKey().mapValues(lambda vals: " ".join(vals))
-        rdd_final_sorted = rdd_final.sortByKey()
-
+        # [((il, (file1:2)), (il, (file3:4))] -> (il, (file1:2, file3:4))
+        # rdd_final = rdd_words_filecount.groupByKey().mapValues(lambda vals: " ".join(vals))
+        rdd_final = rdd_words_filecount.reduceByKey(lambda a, b: a + " " + b)
+        
         # save the result on the hdfs
-        rdd_final_sorted.saveAsTextFile(output_dir)
+        rdd_final.saveAsTextFile(output_dir)
         print(f"Word count saved in {output_dir}")
 
     except Exception as e:

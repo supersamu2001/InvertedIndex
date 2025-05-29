@@ -29,9 +29,10 @@ public class InvertedIndex {
         job.setMapOutputValueClass(CountPerFile.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
+        job.setNumReduceTasks(2);
 
         // job.setInputFormatClass(CombineTextInputFormat.class); // Combine many small files
-        CombineTextInputFormat.setMaxInputSplitSize(job, 1024 * 1024 * 32);
+        CombineTextInputFormat.setMaxInputSplitSize(job, 1024 * 1024 * 128);
 
         /*
         for (int i = 0; i < otherArgs.length - 1; ++i)
