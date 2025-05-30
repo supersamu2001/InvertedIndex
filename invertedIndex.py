@@ -52,7 +52,6 @@ if __name__ == "__main__":
     n_files = sum(1 for fileStatus in status if fileStatus.isFile())
 
     try:
-        #
         rdd = sc.wholeTextFiles(input_dir).coalesce(max(1, int(n_files / 1000)))
 
         # x[0] = fileName
@@ -68,9 +67,9 @@ if __name__ == "__main__":
         rdd_words_filecount = rdd_count_words.map(lambda x: (x[0][0], f"{x[0][1]}:{x[1]}"))
 
         # [((il, (file1:2)), (il, (file3:4))] -> (il, (file1:2, file3:4))
-        # rdd_final = rdd_words_filecount.groupByKey().mapValues(lambda vals: " ".join(vals))
-        rdd_final = rdd_words_filecount.reduceByKey(lambda a, b: a + " " + b)
-        
+        rdd_final = rdd_words_filecount.groupByKey().mapValues(lambda vals: " ".join(vals))
+        # rdd_final = rdd_words_filecount.reduceByKey(lambda a, b: a + " " + b)
+
         # save the result on the hdfs
         rdd_final.saveAsTextFile(output_dir)
         print(f"Word count saved in {output_dir}")
