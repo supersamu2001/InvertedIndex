@@ -55,22 +55,31 @@ if __name__ == "__main__":
         # DATASET 2GB (file max 500KB)
         # partition di 1000 files --> 15 min (stage 0) 2.3 min (stage 1) --> 18.3 min [300060_0058]
         # partition di 500 files --> 14 min (stage 0) 3 min (stage 1) --> 17 min [300060_0059]
-        # partition di 250 files --> 13 min (stage 0) 4 min (stage 1) --> 17 min [300060_00]
+        # partition di 250 files --> 13 min (stage 0) 4 min (stage 1) --> 17 min [300060_0060]
         # partition di 125 files -->  min (stage 0) min (stage 1) -->  min [300060_00]
-        # HADOOOOOOOOOP -> 13 minuti e 10 sec [0060_0062]
+        # HADOOP -> 13 minuti e 10 sec [0060_0062]
         # NonParallel --> 32 minuti (19.8 files/s)
 
         # DATASET 1GB (file max 500KB)
         # partition di 1000 files --> 10 min (stage 0) 2 min (stage 1) --> 12 min [300060_0041]
-        # partition di 500 files --> 8.6 min (stage 0) 1.7 min (stage 1) --> 10.1 min [300060_0043]
+        # partition di 500 files --> 8.6 min (stage 0) 1.7 min (stage 1) --> 10.3 min [300060_0043]
         # partition di 250 files --> 6.4 min (stage 0) 1.8 min (stage 1) --> 8.2 min [300060_0044]
         # partition di 125 files --> 6.1 min (stage 0) 2.5 min (stage 1) --> 8.6 min [300060_0045]
+
+        # Hadoop (Combiner) --> 9.5 min
+        # Hadoop (In-Mapper) --> 7.75 min
+
+        # partition di circa 32MB --> 8.5 min (stage 0) 1.6 min (stage 1) --> 10.1 min [300060_0064]
+        # partition di circa 16MB --> 6.2 min (stage 0) 2.1 min (stage 1) --> 8.3 min [300060_0066]
 
         # DATASET 300MB (file max 500KB)
         # partition di 1000 files --> 3.4 min (stage 0) 23 s (stage 1) --> 4.4 min [300060_0048]
         # partition di 500 files --> 3.1 min (stage 0)  33 s (stage 1) --> 3.7 min [300060_0049]
         # partition di 250 files --> 2 min (stage 0) 30 s (stage 1) --> 2.5 min [300060_0050]
-        # partition di 125 files --> 1.9 min (stage 0) 34 s (stage 1) --> 2.4 min [300060_0051]
+        # partition di 125 files --> 1.9 min (stage 0) 34 s (stage 1) --> 2.4 min [300060_0051]clesr
+
+        # Hadoop (Combiner) --> 3 min
+        # Hadoop (In-Mapper) -->
 
         # DATASET 100MB (file max 500KB)
         # partition di 1000 files --> 47 s (stage 0) 6 s (stage 1) --> 54 s [300060_0052] (2 task)
