@@ -46,7 +46,7 @@ y_hadoop_combiner = [21970, 101067, 275230, 546362, 1513755, 2569199]
 
 y_hadoop_inmapper = [16067, 64016, 234068, 306486, 355855, 1923344]
 
-y_spark = [ , 140189, 335665, 615965, 1058833, 1702367]
+y_spark = [ 55901, 140189, 335665, 615965, 1058833, 1702367]
 
 plt.plot(x_values, y_hadoop_combiner, marker='o', label='Hadoop with combiner function', color='blue')
 plt.plot(x_values, y_hadoop_inmapper, marker='*', label='Hadoop with in-mapper function', color='yellow')
