@@ -3,5 +3,4 @@ it\unipi\hadoop\FileLineKey.class
 it\unipi\hadoop\InvertedIndex.class
 it\unipi\hadoop\InvertedIndexReducer.class
 it\unipi\hadoop\MyInputFormat.class
-it\unipi\hadoop\CountPerFile.class
 it\unipi\hadoop\CombineFileRecordReaderWrapper.class
