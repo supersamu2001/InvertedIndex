@@ -27,7 +27,7 @@ public class InvertedIndex {
         job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
-        job.setNumReduceTasks(2);
+        job.setNumReduceTasks(16);
         // job.setNumReduceTasks(conf.getInt("mapreduce.job.reduces", 1));
 
         CombineTextInputFormat.setMaxInputSplitSize(job, 1024 * 1024 * 128); // 128MB
