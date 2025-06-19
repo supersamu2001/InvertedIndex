@@ -9,7 +9,7 @@ stopwords = set(StopwordList(language="en").words())
 
 # Function that scans the contents of the folder looking for .txt files (the inputs)
 def analizza_cartella(inputFolder, outputFile):
-    # Creating structure: dictionary of dictionaries: word -> { file -> count }
+    # Creating structure: dictionary of dictionaries
     occurrences = defaultdict(lambda: defaultdict(int))
 
     # Cycle through all files in the folder looking for .txt
@@ -42,7 +42,7 @@ def analizza_cartella(inputFolder, outputFile):
     os.makedirs(os.path.dirname(outputFile), exist_ok=True)
 
     # Output file formatting:
-    #    capra    file1:1     file3:4
+    #    capra     file1:1     file3:4
     #    cavoli    file2:3     file3:1
     with open(outputFile, "w", encoding="utf-8") as out:
         # Sort words alphabetically

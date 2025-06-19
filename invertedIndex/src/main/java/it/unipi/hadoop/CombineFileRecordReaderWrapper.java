@@ -4,7 +4,6 @@ import org.apache.hadoop.mapreduce.*;
 import org.apache.hadoop.mapreduce.lib.input.*;
 import org.apache.hadoop.io.*;
 import org.apache.hadoop.fs.*;
-import org.apache.hadoop.conf.Configuration;
 
 import java.io.IOException;
 
@@ -36,10 +35,10 @@ public class CombineFileRecordReaderWrapper extends RecordReader<FileLineKey, Te
         if (!lineReader.nextKeyValue())
             return false;
 
-        LongWritable offset = lineReader.getCurrentKey();    // offset riga
-        Text line = lineReader.getCurrentValue();            // contenuto riga
+        LongWritable offset = lineReader.getCurrentKey();    // line offset
+        Text line = lineReader.getCurrentValue();            // line content
 
-        // crea la tua chiave personalizzata con nome file + offset
+        // create custom key with filename + offset
         currentKey = new FileLineKey(path.getName(), offset.get());
         currentValue = new Text(line);
 

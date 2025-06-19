@@ -5,17 +5,14 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
 /*
-    1 input: ((il, file1:1) (cane, file1:1) (il, file1:1) ... )
-    more output: ((il, file1:2) (cane, file1:1) ... )
- */
-
+    input: (("blu", file1:1) ("blu", file1:1), ("blu", file2:1), ("blu", file3:1))
+    output: (("blu", file1:2) ("blu", file2:1), ("blu", file3:1))
+*/
 public class InvertedIndexCombiner extends Reducer<Text, CountPerFile, Text, CountPerFile> {
 
     @Override
@@ -25,7 +22,7 @@ public class InvertedIndexCombiner extends Reducer<Text, CountPerFile, Text, Cou
         for (CountPerFile val : values) {
             String fileName = val.getFileName().toString();
             int count = val.getCounter().get();
-            // cerca nella map una chiave col nome di fileName, e somma il suo valore (oppure 0 se ancora non è presente) con count
+            // search the map for a key with the name fileName, and add its value (or 0 if it is not present yet) with count
             fileCounts.put(fileName, fileCounts.getOrDefault(fileName, 0) + count);
         }
 

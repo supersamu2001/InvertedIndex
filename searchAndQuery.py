@@ -8,7 +8,7 @@ if __name__ == "__main__":
 
     input_directory = sys.argv[1]
     words = sys.argv[2:]
-    # remove the replicated words
+    # remove the replicated input words
     words = list(set(words))
     # store the number of the input words
     lenInputWords = len(words)
@@ -27,9 +27,7 @@ if __name__ == "__main__":
                 input_contents.append(content)
     
     # create a single input file (as a string) to search the words into it
-    # the file_input contains all the words sorted! (important)
     file_input = "\n".join(input_contents)
-
     fileCount = {}
 
     file_lines = file_input.split("\n")
@@ -37,7 +35,7 @@ if __name__ == "__main__":
         data = file_line.split("\t")
         word = data[0]
         files = data[1:]
-
+        
         # the word is found
         if word in words :
             # increments the count of the finding files for the target word

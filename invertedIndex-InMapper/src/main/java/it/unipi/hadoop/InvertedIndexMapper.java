@@ -1,6 +1,5 @@
 package it.unipi.hadoop;
 
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
@@ -8,32 +7,32 @@ import java.io.*;
 import java.util.*;
 
 /*
-    1 input: file1
-    more output: ((il, file1:1) (cane, file1:1) (il, file1:1) ... )
- */
+    input:  (key, "il cane blu è giallo e blu")
+    output: (("cane", file1:1) ("blu", file1:2), ("giallo", file1:1))
+*/
 public class InvertedIndexMapper extends Mapper<FileLineKey, Text, Text, Text> {
     private final Set<String> stopWords = new HashSet<>();
     private final Map<String, Integer> wordPerFiles = new HashMap<>();
     private String fileName;
 
     @Override
-    protected void setup(Context context) throws IOException, InterruptedException {
+    protected void setup(Context context) throws IOException {
+        // Loading stopwords file:
         String fileName = "stopwords.txt";
         try (InputStream input = getClass().getClassLoader().getResourceAsStream(fileName);
              BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {
 
-            if (input == null) {
-                throw new IllegalArgumentException("File not found: " + fileName);
-            }
-
             String line;
             while ((line = reader.readLine()) != null) {
+                // The words are made lowercase
                 String cleaned = line.trim().toLowerCase();
                 if (!cleaned.isEmpty()) {
+                    // It adds the cleaned word to the stopwords file
                     stopWords.add(cleaned);
                 }
             }
         } catch (IOException e) {
+            //Exceptions if there are errors
             context.getCounter("Errors", "StopWordsSetup").increment(1);
             throw new IOException("Error while loading stop words", e);
         }
@@ -41,7 +40,9 @@ public class InvertedIndexMapper extends Mapper<FileLineKey, Text, Text, Text> {
 
     @Override
     protected void map(final FileLineKey key, final Text value, final Context context) throws IOException, InterruptedException {
+        // It obtains the file name
         String actualFileName = key.getFileName().toString();
+        // It cleans the text (making it lowercase and removing stopwords)
         String cleaned = preprocessing(value.toString());
         if(fileName == null) fileName = actualFileName;
         if(!fileName.equals(actualFileName)) {
@@ -50,6 +51,7 @@ public class InvertedIndexMapper extends Mapper<FileLineKey, Text, Text, Text> {
             fileName = actualFileName;
         }
 
+        // Counter of words
         for (String token : cleaned.split("\\s+")) {
             if (token.isEmpty()) continue;
             wordPerFiles.merge(token, 1, Integer::sum);
@@ -63,6 +65,7 @@ public class InvertedIndexMapper extends Mapper<FileLineKey, Text, Text, Text> {
         flush(context);
     }
 
+    // Emission of the couple (word, file:counter) and flush
     private void flush(Context context) throws IOException, InterruptedException {
         for (Map.Entry<String, Integer> entry : wordPerFiles.entrySet())
             context.write(new Text(entry.getKey()), new Text(fileName + ":" + entry.getValue()));
@@ -70,14 +73,14 @@ public class InvertedIndexMapper extends Mapper<FileLineKey, Text, Text, Text> {
     }
     
     private String preprocessing(String text) {
-        // Converte in minuscolo, rimuove genitivi sassoni e caratteri non alfanumerici
+        // Convertion to lowercase and sasson genitive and stopwords removal
         text = text.toLowerCase()
                 .replaceAll("'s\\b", "")       // Rimuove genitivi sassoni
                 .replaceAll("[^a-z\\s]", " ")  // Rimuove caratteri non alfanumerici
                 .replaceAll("\\s+", " ")       // Riduce spazi multipli
                 .trim();
 
-        // Filtra le stop words
+        // Stopwords filter
         StringBuilder processedWords = new StringBuilder();
         for (String token : text.split("\\s+")) {
             if (!stopWords.contains(token)) {
