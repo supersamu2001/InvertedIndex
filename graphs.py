@@ -120,5 +120,39 @@ def more_reducers():
     plt.savefig("moreReducers.png", dpi=300)  # dpi=300 per alta qualità
     plt.show()
 
+def different_split():
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    # Dataset size (MB)
+    x_values = [94, 353, 706, 1100]
+
+    # Tempi di esecuzione per ogni configurazione
+    y_hadoop_combiner_128 = [111.67, 181.50, 289, 571]
+    y_hadoop_combiner_1 = [216, 545, 1021, 1697]
+
+    # Larghezza delle barre e posizioni
+    bar_width = 0.35
+    x_indexes = np.arange(len(x_values))
+
+    # Creazione del grafico a colonne
+    plt.bar(x_indexes - bar_width/2, y_hadoop_combiner_128, width=bar_width,
+            label='Hadoop with 128MB per split', color='blue')
+    plt.bar(x_indexes + bar_width/2, y_hadoop_combiner_1, width=bar_width,
+            label='Hadoop with 1MB per split', color='red')
+
+    # Etichette e titoli
+    plt.xlabel("Dataset size (MB)")
+    plt.ylabel("Time (in seconds)")
+    plt.title("Different input splits (Bar Chart)")
+    plt.xticks(ticks=x_indexes, labels=[str(v) for v in x_values])
+    plt.legend()
+    plt.grid(True, axis='y', linestyle='--', alpha=0.7)
+
+    # Layout e salvataggio
+    plt.tight_layout()
+    plt.savefig("Different_inputSplit.png", dpi=300)
+    plt.show()
+
 # external_vs_inmapper()
-more_reducers()
+different_split()
