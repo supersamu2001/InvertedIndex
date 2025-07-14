@@ -34,7 +34,7 @@ public class InvertedIndex {
         // job.setMapOutputValueClass(Text.class);  // not necessary
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
-        
+
         // job.setNumReduceTasks(16);
 
         // Definition of the input split size
