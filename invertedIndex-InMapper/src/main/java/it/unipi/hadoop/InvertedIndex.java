@@ -23,13 +23,18 @@ public class InvertedIndex {
         // Job creation
         Job job = Job.getInstance(conf, "inverted index");
         job.setJarByClass(InvertedIndex.class);
+
+        // Identify the classes to be called for each type of task
         job.setMapperClass(InvertedIndexMapper.class);
         job.setReducerClass(InvertedIndexReducer.class);
+
+        // Identify the type of keys and values
         job.setInputFormatClass(MyInputFormat.class);
-        job.setMapOutputKeyClass(Text.class);
-        job.setMapOutputValueClass(Text.class);
+        // job.setMapOutputKeyClass(Text.class);    // not necessary
+        // job.setMapOutputValueClass(Text.class);  // not necessary
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
+
         // job.setNumReduceTasks(16);
 
         // Definition of the input split size

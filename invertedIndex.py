@@ -55,7 +55,7 @@ if __name__ == "__main__":
 
     try:
         # split the dataset into partition of 750 files each
-        # this number is choose in experimental way
+        # this number is chosen in experimental way
         rdd = sc.wholeTextFiles(input_dir).coalesce(max(1, int(n_files / 750)))
 
         # x[0] = fileName
@@ -65,14 +65,14 @@ if __name__ == "__main__":
 
         # [ ((il, file1), 1), ((il, file1), 1) ] -> ((il, file1), 2)
         # we are sure that each file are contains into only one partition
-        # this avoid shuffle throught partitions
+        # this avoid shuffle through partitions
         rdd_count_words = rdd_cleaned_words.mapPartitions(local_reduce)
 
         # (il, file1), 2) -> (il, (file1:2))
         rdd_words_filecount = rdd_count_words.map(lambda x: (x[0][0], f"{x[0][1]}:{x[1]}"))
 
         # [((il, (file1:2)), (il, (file3:4))] -> (il, (file1:2, file3:4))
-        # in this trasformation we have shuffle thought partitions
+        # in this transformation we have shuffle thought partitions
         rdd_final = rdd_words_filecount.groupByKey().mapValues(lambda vals: " ".join(vals))
 
         # save the result on the hdfs

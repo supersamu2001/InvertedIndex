@@ -19,7 +19,7 @@ public class InvertedIndexReducer extends Reducer<Text, CountPerFile, Text, Text
     public void reduce(Text key, Iterable<CountPerFile> values, Context context) throws IOException, InterruptedException {
         // List to save the final formatted result
         List<String> result = new ArrayList<>();
-        // Map for total occurences of the word for each file
+        // Map for total occurrences of the word for each file
         Map<String, Integer> fileCounts = new HashMap<>();
 
         for (CountPerFile val : values) {

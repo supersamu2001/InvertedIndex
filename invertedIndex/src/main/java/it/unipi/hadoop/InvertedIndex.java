@@ -20,21 +20,27 @@ public class InvertedIndex {
         }
         Job job = Job.getInstance(conf, "inverted index");
         job.setJarByClass(InvertedIndex.class);
+
+        // Identify the classes to be called for each type of task
         job.setMapperClass(InvertedIndexMapper.class);
         job.setCombinerClass(InvertedIndexCombiner.class);
         job.setReducerClass(InvertedIndexReducer.class);
+
+        // Identify the type of keys and values
         job.setInputFormatClass(MyInputFormat.class);
-        // job.setInputKeyClass(FileLineKey.class);
-        job.setMapOutputKeyClass(Text.class);
+        // job.setMapOutputKeyClass(Text.class);        // not necessary
         job.setMapOutputValueClass(CountPerFile.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
+
         // job.setNumReduceTasks(2);
 
-        // job.setInputFormatClass(CombineTextInputFormat.class); // Combine many small files
-        CombineTextInputFormat.setMaxInputSplitSize(job, 1024 * 1024 * 128);
+        CombineTextInputFormat.setMaxInputSplitSize(job, 1024 * 1024 * 128);    // 128 MB
 
+        // Specifies the input path. CombineFileInputFormat allows combining multiple files in the same input split
         CombineFileInputFormat.addInputPath(job, new Path(args[0]));
+
+        // Specifies the output path
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
         System.exit(job.waitForCompletion(true) ? 0 : 1);
     }

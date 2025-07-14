@@ -54,6 +54,8 @@ public class InvertedIndexMapper extends Mapper<FileLineKey, Text, Text, Text> {
         // Counter of words
         for (String token : cleaned.split("\\s+")) {
             if (token.isEmpty()) continue;
+
+            // se la parola non è presente come chiave, allora metto 1, altrimenti aggiungo 1 al valore già presente
             wordPerFiles.merge(token, 1, Integer::sum);
         }
 
@@ -75,9 +77,9 @@ public class InvertedIndexMapper extends Mapper<FileLineKey, Text, Text, Text> {
     private String preprocessing(String text) {
         // Convertion to lowercase and sasson genitive and stopwords removal
         text = text.toLowerCase()
-                .replaceAll("'s\\b", "")       // Rimuove genitivi sassoni
-                .replaceAll("[^a-z\\s]", " ")  // Rimuove caratteri non alfanumerici
-                .replaceAll("\\s+", " ")       // Riduce spazi multipli
+                .replaceAll("'s\\b", "")       // Removes Saxon genitives
+                .replaceAll("[^a-z\\s]", " ")  // Removes non-alphanumeric characters
+                .replaceAll("\\s+", " ")       // Remove multiple spaces
                 .trim();
 
         // Stopwords filter

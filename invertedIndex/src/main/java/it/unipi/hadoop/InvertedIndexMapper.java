@@ -59,9 +59,9 @@ public class InvertedIndexMapper extends Mapper<FileLineKey, Text, Text, CountPe
     private String preprocessing(String text) {
         // Convert to lowercase, remove Saxon genitives and non-alphanumeric characters
         text = text.toLowerCase()
-                .replaceAll("'s\\b", "")       // Rimuove genitivi sassoni
-                .replaceAll("[^a-z\\s]", " ")  // Rimuove caratteri non alfanumerici
-                .replaceAll("\\s+", " ")       // Riduce spazi multipli
+                .replaceAll("'s\\b", "")       // Removes Saxon genitives
+                .replaceAll("[^a-z\\s]", " ")  // Removes non-alphanumeric characters
+                .replaceAll("\\s+", " ")       // Remove multiple spaces
                 .trim();
 
         // Stopwords filter
